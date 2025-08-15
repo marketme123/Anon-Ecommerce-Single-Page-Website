@@ -1,11 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Added to Cart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Added to Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Hide scrollbars from confetti overflow */
+        }
+        .fade-in-pop {
+            animation: fadeInPop 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeInPop {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f472b6; /* Default pink color */
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+    </style>
 </head>
-<body>
-  <h1>Added to Card Option</h1>
+<body class="bg-pink-50 flex items-center justify-center min-h-screen">
+
+    <div class="bg-gradient-to-br from-pink-500 to-pink-600 absolute top-0 left-0 w-full h-full"></div>
+
+    <div id="main-container" class="relative bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl max-w-md w-full m-4 overflow-hidden fade-in-pop text-center">
+        <div class="p-8 md:p-12">
+            <!-- Success Icon -->
+            <div id="success-icon" class="w-20 h-20 bg-pink-500 rounded-full mx-auto flex items-center justify-center mb-6 shadow-lg shadow-pink-500/40 transform transition-transform duration-500 hover:scale-110 cursor-pointer">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+
+            <!-- Content -->
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                Just Added to Cart!
+            </h1>
+            <p class="text-gray-600 text-lg">
+                Thanks for Shopping
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const successIcon = document.getElementById('success-icon');
+        const mainContainer = document.getElementById('main-container');
+
+        // --- Confetti Animation ---
+        function createConfetti() {
+            const confettiCount = 100;
+            const colors = ['#f9a8d4', '#f472b6', '#ec4899', '#db2777', '#be185d'];
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const iconRect = successIcon.getBoundingClientRect();
+                const containerRect = document.body.getBoundingClientRect();
+
+                // Start confetti from the center of the icon
+                const startX = iconRect.left + iconRect.width / 2 - containerRect.left;
+                const startY = iconRect.top + iconRect.height / 2 - containerRect.top;
+
+                confetti.style.left = `${startX}px`;
+                confetti.style.top = `${startY}px`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Randomize shape
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%';
+                } else {
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }
+
+                document.body.appendChild(confetti);
+
+                // Animate it
+                animateConfetti(confetti);
+            }
+        }
+
+        function animateConfetti(confetti) {
+            const duration = Math.random() * 3000 + 2000; // 2-5 seconds
+            const angle = Math.random() * Math.PI * 2; // Random direction
+            const distance = Math.random() * 300 + 150;
+
+            const endX = Math.cos(angle) * distance;
+            const endY = Math.sin(angle) * distance + (window.innerHeight / 2); // Gravity effect
+
+            const animation = confetti.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${endX}px, ${endY}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: duration,
+                easing: 'cubic-bezier(0.1, 0.9, 0.2, 1.0)',
+                fill: 'forwards'
+            });
+
+            animation.onfinish = () => {
+                confetti.remove();
+            };
+        }
+
+        // Trigger confetti on page load after a short delay
+        setTimeout(createConfetti, 800);
+
+        // Also trigger on icon click for extra interactivity
+        successIcon.addEventListener('click', createConfetti);
+    </script>
+
 </body>
 </html>
