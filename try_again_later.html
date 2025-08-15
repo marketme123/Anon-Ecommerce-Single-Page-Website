@@ -1,11 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Please, Try Again Later</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Please Try Again Later</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple keyframe animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.3; }
+        }
+        /* Applying animations */
+        #robot {
+            animation: float 6s ease-in-out infinite;
+        }
+        #robot-eye {
+            animation: blink 4s ease-in-out infinite;
+        }
+        .fade-in {
+            animation: fadeInAnimation 1s ease-in forwards;
+        }
+        @keyframes fadeInAnimation {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-  <h1>Please, Try Again Later</h1>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen overflow-hidden">
+
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900"></div>
+
+    <div class="relative text-center p-8 max-w-lg w-full">
+        <!-- Animated Robot SVG -->
+        <div class="mb-8 fade-in" style="animation-delay: 0.2s;">
+            <svg id="robot" class="w-48 h-48 mx-auto" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Shadow -->
+                <ellipse cx="100" cy="180" rx="60" ry="10" fill="rgba(0,0,0,0.2)"/>
+                <!-- Body -->
+                <g>
+                    <rect x="50" y="80" width="100" height="80" rx="20" fill="#4A5568"/>
+                    <rect x="60" y="100" width="80" height="50" rx="10" fill="#2D3748" class="opacity-75"/>
+                    <!-- Eye -->
+                    <circle id="robot-eye" cx="100" cy="125" r="10" fill="#63B3ED"/>
+                </g>
+                <!-- Head -->
+                <g>
+                    <rect x="70" y="30" width="60" height="60" rx="30" fill="#718096"/>
+                    <!-- Antenna -->
+                    <line x1="100" y1="30" x2="100" y2="10" stroke="#A0AEC0" stroke-width="4"/>
+                    <circle cx="100" cy="8" r="5" fill="#63B3ED"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Content -->
+        <h1 class="text-4xl md:text-5xl font-black text-white mb-4 fade-in" style="animation-delay: 0.4s;">
+            Oops! Houston, we have a glitch.
+        </h1>
+        <p class="text-lg text-gray-400 mb-8 fade-in" style="animation-delay: 0.6s;">
+            Our systems are taking a little nap. We've sent a cup of coffee their way. Please try again in a moment.
+        </p>
+
+        <!-- Button and Countdown Timer -->
+        <div class="fade-in" style="animation-delay: 0.8s;">
+            <button id="tryAgainBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg shadow-blue-600/30">
+                Try Again
+            </button>
+            <div id="countdown" class="text-gray-500 mt-4 text-sm h-6"></div>
+        </div>
+    </div>
+
+    <script>
+        const tryAgainBtn = document.getElementById('tryAgainBtn');
+        const countdownEl = document.getElementById('countdown');
+        let countdownInterval;
+        let countdownTime = 15; // seconds
+
+        tryAgainBtn.addEventListener('click', () => {
+            // Disable the button
+            tryAgainBtn.disabled = true;
+            tryAgainBtn.classList.remove('hover:bg-blue-700', 'hover:scale-105');
+            tryAgainBtn.classList.add('cursor-not-allowed', 'opacity-50');
+            tryAgainBtn.textContent = 'Retrying...';
+
+            let timeLeft = countdownTime;
+            
+            // Clear any existing interval
+            clearInterval(countdownInterval);
+
+            // Start new countdown
+            countdownInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    // Re-enable the button
+                    tryAgainBtn.disabled = false;
+                    tryAgainBtn.classList.add('hover:bg-blue-700', 'hover:scale-105');
+                    tryAgainBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+                    tryAgainBtn.textContent = 'Try Again';
+                    countdownEl.textContent = '';
+                    
+                    // Add a little shake to draw attention
+                    tryAgainBtn.classList.add('animate-pulse');
+                    setTimeout(() => tryAgainBtn.classList.remove('animate-pulse'), 1000);
+
+                } else {
+                    countdownEl.textContent = `You can try again in ${timeLeft} second${timeLeft > 1 ? 's' : ''}...`;
+                    timeLeft--;
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
